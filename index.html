@@ -1,0 +1,83 @@
+<!--This version does NOT use jQuery, uses the version in the travesty media film https://www.youtube.com/watch?v=82hnvUYY6QA  -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>Postcode lookup</title>
+
+  <body>
+  <!--The form  -->
+  <form>
+   Type your post code:
+  <input type="text" id="postcodeinput"><br/>
+  <input type="button" value="Submit" id="btn">
+  </form>
+  <div id="waitingTimesOutput"> </div>
+
+  <script src="data/data.js"></script>
+
+  <script>
+
+          // This function searches the array of objects to find the one that matches the key you give it
+          // From here - https://www.linkedin.com/pulse/javascript-find-object-array-based-objects-property-rafael/
+          function findObjectByKey(array, key, value) {
+            for (var i = 0; i < array.length; i++) {
+              if (array[i][key] === value) {
+                return array[i];
+              }
+            }
+            return null;
+          }
+
+          var obj = findObjectByKey(waitingTimes, 'CCG_code', 'E38000088');
+          console.log(obj);
+
+
+          document.getElementById('btn').addEventListener('click', searchAPIandMatch);
+
+          function searchAPIandMatch(){
+                  var userPostcode = document.getElementById('postcodeinput').value;
+                  console.log(userPostcode);
+                  var endpoint = 'http://api.postcodes.io/postcodes/';
+                  var url = endpoint + userPostcode;
+                  console.log(url);
+                  var xhr = new XMLHttpRequest();
+                  xhr.open('GET', url, true);
+
+                  xhr.onload = function(){
+                    if(this.status == 200){
+                              var response = JSON.parse(this.responseText);
+                              console.log(response);
+                              console.log(response["result"]["codes"]["ccg"]);
+                              userCcgCode = response["result"]["codes"]["ccg"];
+                              console.log(userCcgCode);
+
+                    }
+                    // This bit should search for the user's CcgCode
+                    var obj = findObjectByKey(waitingTimes, 'CCG_code', userCcgCode);
+                    console.log(obj);
+
+                    var output =" ";
+
+                    output += '<p>Your CCG area is '
+                    + obj.CCG15NM +'</p>'
+                    + '<p>From April to June this year '
+                    + obj.apr_june2018_percent_treated_within_31
+                    + ' of people diagnosed with cancer were treated within 31 days.'
+                    + '<p>Over the same period last year, '
+                    + obj.apr_june2017_percent_treated_within_31
+                    + 'of people were treated within 31 days.</p>'
+
+
+                    document.getElementById('waitingTimesOutput').innerHTML = output;
+
+                  }
+                  xhr.send();
+
+
+          }
+
+  </script>
+</body>
+</html>
