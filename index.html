@@ -104,7 +104,7 @@ body {font-family: Arial, Helvetica, sans-serif;}
                                                     // Creates the data table, using dot notation to access
                                                     // keys in the array of objects
                                                     var data = google.visualization.arrayToDataTable([
-                                                    ['Outcome', 'Treated within 31 days', 'Not treated within 31 days', { role: 'annotation' } ],
+                                                    ['Outcome', 'Diagnosed and treated within 31 days', 'Not treated within 31 days', { role: 'annotation' } ],
                                                     ['2016/17 Q1', obj.total_treated_1617_q1, obj.not_treated_within_1617_q1, ''],
                                                     ['2016/17 Q2', obj.total_treated_1617_q2, obj.not_treated_within_1617_q2, ''],
                                                     ['2016/17 Q3', obj.total_treated_1617_q3, obj.not_treated_within_1617_q3, ''],
@@ -121,7 +121,8 @@ body {font-family: Arial, Helvetica, sans-serif;}
                                                                    'width':800,
                                                                    'height':500,
                                                                     isStacked: true,
-                                                                    legend: { position: 'top'}
+                                                                    legend: { position: 'top'},
+                                                                    hAxis: {textStyle: {fontSize: 8}}
                                                                   };
 
                                                     // Instantiate and draw the chart, passing in some options
