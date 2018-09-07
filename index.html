@@ -56,7 +56,7 @@ body {font-family: Arial, Helvetica, sans-serif;}
           function searchAPIandMatch(){
                   var userPostcode = document.getElementById('postcodeinput').value;
                   console.log(userPostcode);
-                  var endpoint = 'http://api.postcodes.io/postcodes/';
+                  var endpoint = 'https://api.postcodes.io/postcodes/';
                   var url = endpoint + userPostcode;
                   console.log(url);
                   var xhr = new XMLHttpRequest();
