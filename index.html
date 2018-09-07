@@ -1,25 +1,43 @@
-<!--This version does NOT use jQuery, uses the version in the travesty media film https://www.youtube.com/watch?v=82hnvUYY6QA  -->
+<!--This version does NOT use jQuery, uses the version in the travesty media film
+https://www.youtube.com/watch?v=82hnvUYY6QA  -->
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8"/>
   <title>Postcode lookup</title>
+<style>
+body {font-family: Arial, Helvetica, sans-serif;}
+</style>
+</head>
 
   <body>
+
+  <h3>Cancer treatment waiting times</h3>
+
   <!--The form  -->
   <form>
    Type your post code:
   <input type="text" id="postcodeinput"><br/>
   <input type="button" value="Submit" id="btn">
   </form>
+
+  <!--The div where the text will appear  -->
   <div id="waitingTimesOutput"> </div>
 
-  <script src="data/data.js"></script>
+  <!--The div where the chart will appear  -->
+  <div id="chart_div"></div>
+
+  <!--Link to the file of data (a javascript file with an array of objects)  -->
+  <script src="data/data4.js"></script>
+
+   <!--Link the the google charts API  -->
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
   <script>
 
-          // This function searches the array of objects to find the one that matches the key you give it
+          // This function searches the array of objects to find the one
+          // that matches the key you give it
           // From here - https://www.linkedin.com/pulse/javascript-find-object-array-based-objects-property-rafael/
           function findObjectByKey(array, key, value) {
             for (var i = 0; i < array.length; i++) {
@@ -30,9 +48,8 @@
             return null;
           }
 
-          var obj = findObjectByKey(waitingTimes, 'CCG_code', 'E38000088');
-          console.log(obj);
-
+          // This takes the input from the form and uses it to make an API call to postcodes.io
+          // Using the code from this tutorial - https://www.youtube.com/watch?v=82hnvUYY6QA
 
           document.getElementById('btn').addEventListener('click', searchAPIandMatch);
 
@@ -54,28 +71,68 @@
                               console.log(userCcgCode);
 
                     }
-                    // This bit should search for the user's CcgCode
+                    // Searching for the user's CcgCode
                     var obj = findObjectByKey(waitingTimes, 'CCG_code', userCcgCode);
                     console.log(obj);
 
                     var output =" ";
 
+                    // The text that will appear on the page
                     output += '<p>Your CCG area is '
-                    + obj.CCG15NM +'</p>'
+                    + obj.CCG15NM
+                    +'</p>'
                     + '<p>From April to June this year '
-                    + obj.apr_june2018_percent_treated_within_31
+                    + obj.percent_treated_within_1819_q1
                     + ' of people diagnosed with cancer were treated within 31 days.'
                     + '<p>Over the same period last year, '
-                    + obj.apr_june2017_percent_treated_within_31
-                    + 'of people were treated within 31 days.</p>'
-
+                    + obj.percent_treated_within_1718_q1
+                    + ' of people were treated within 31 days.</p>'
 
                     document.getElementById('waitingTimesOutput').innerHTML = output;
 
+                    // Code for the google chart
+
+                    // Loads the Visualization API and the corechart package.
+                                                  google.charts.load('current', {'packages':['corechart']});
+
+                                                  // Set a callback to run when the Google Visualization API is loaded.
+                                                  google.charts.setOnLoadCallback(drawChart);
+
+                                                  // Callback that creates and populates a data table,
+                                                  // instantiates the chart, passes in the data and draws it.
+                                                  function drawChart() {
+
+                                                    // Creates the data table, using dot notation to access
+                                                    // keys in the array of objects
+                                                    var data = google.visualization.arrayToDataTable([
+                                                    ['Outcome', 'Treated within 31 days', 'Not treated within 31 days', { role: 'annotation' } ],
+                                                    ['2016/17 Q1', obj.total_treated_1617_q1, obj.not_treated_within_1617_q1, ''],
+                                                    ['2016/17 Q2', obj.total_treated_1617_q2, obj.not_treated_within_1617_q2, ''],
+                                                    ['2016/17 Q3', obj.total_treated_1617_q3, obj.not_treated_within_1617_q3, ''],
+                                                    ['2016/17 Q4', obj.total_treated_1617_q4, obj.not_treated_within_1617_q4, ''],
+                                                    ['2017/18 Q1', obj.total_treated_1718_q1, obj.not_treated_within_1718_q1, ''],
+                                                    ['2017/18 Q2', obj.total_treated_1718_q2, obj.not_treated_within_1718_q2, ''],
+                                                    ['2017/18 Q3', obj.total_treated_1718_q3, obj.not_treated_within_1718_q3, ''],
+                                                    ['2017/18 Q4', obj.total_treated_1718_q4, obj.not_treated_within_1718_q4, ''],
+                                                    ['2018/19 Q1', obj.total_treated_1819_q1, obj.not_treated_within_1819_q1, '']
+                                                  ]);
+
+                                                    // Set chart options
+                                                    var options = {'title':'Cancer patients treated',
+                                                                   'width':600,
+                                                                   'height':500,
+                                                                    isStacked: true,
+                                                                    legend: { position: 'top'}
+                                                                  };
+
+                                                    // Instantiate and draw the chart, passing in some options
+                                                    var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
+                                                    chart.draw(data, options);
+                                                  }
+
                   }
+                  // Sends the actual XMLHttpRequest
                   xhr.send();
-
-
           }
 
   </script>
