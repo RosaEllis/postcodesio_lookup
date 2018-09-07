@@ -65,13 +65,12 @@ body {font-family: Arial, Helvetica, sans-serif;}
                   xhr.onload = function(){
                     if(this.status == 200){
                               var response = JSON.parse(this.responseText);
-                              console.log(response);
-                              console.log(response["result"]["codes"]["ccg"]);
+                              // Digging in to the object to get the CCG code for the user's area 
                               userCcgCode = response["result"]["codes"]["ccg"];
                               console.log(userCcgCode);
 
                     }
-                    // Searching for the user's CcgCode
+                    // Searching for the data that is linked to the user's CcgCode
                     var obj = findObjectByKey(waitingTimes, 'CCG_code', userCcgCode);
                     console.log(obj);
 
